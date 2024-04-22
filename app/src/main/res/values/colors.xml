@@ -5,4 +5,5 @@
 
     <color name="app_theme">#8e019e</color>
     <color name="app_the">#f6fbff</color>
+    <color name="text_back">#f6fbff</color>
 </resources>
