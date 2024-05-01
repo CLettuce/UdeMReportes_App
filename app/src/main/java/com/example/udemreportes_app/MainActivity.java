@@ -1,51 +1,68 @@
 package com.example.udemreportes_app;
 
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.udemreportes_app.response.AuthenticationManager;
-
-
+import com.example.udemreportes_app.network.ApiInterface;
+import com.example.udemreportes_app.response.LoginResponse;
+import com.example.udemreportes_app.response.LoginRequest;
+import retrofit2.Call;
+import androidx.annotation.NonNull;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText usernameEditText;
-    private EditText passwordEditText;
-    private AuthenticationManager authenticationManager;
+    private static final String BASE_URL = "http://localhost:5197/api/"; // Reemplaza con la URL de tu API
+    private ApiInterface apiInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Inicializa el AuthenticationManager
-        authenticationManager = new AuthenticationManager(this);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
 
-        // Obtiene referencias a los campos de entrada de usuario y contraseña
-        usernameEditText = findViewById(R.id.editTextText);
-        passwordEditText = findViewById(R.id.editTextTextPassword);
+        apiInterface = retrofit.create(ApiInterface.class);
 
-        // Obtiene una referencia al botón de inicio de sesión y configurar un listener para él
         Button loginButton = findViewById(R.id.button2);
-        loginButton.setOnClickListener(view -> loginUser());
+
+        loginButton.setOnClickListener(v -> realizarSolicitudLogin());
     }
 
-    private void loginUser() {
-        // Obtener el nombre de usuario y la contraseña ingresados por el usuario
-        String username = usernameEditText.getText().toString().trim();
-        String password = passwordEditText.getText().toString().trim();
+    private void realizarSolicitudLogin() {
+        LoginRequest loginRequest = new LoginRequest("nombre_usuario", "contraseña");
 
-        // Validar si se han ingresado los datos de inicio de sesión
-        if (username.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Por favor, ingresa tu nombre de usuario y contraseña.", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        Call<LoginResponse> call = apiInterface.loginUser(loginRequest);
+        call.enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
+                if (response.isSuccessful()) {
+                    // Procesar la respuesta exitosa
+                    LoginResponse loginResponse = response.body();
+                    if (loginResponse != null) {
+                        String message = loginResponse.getMessage();
+                        Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    // Procesar la respuesta de error
+                    Toast.makeText(MainActivity.this, "Error: " + response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
 
-        // Realizar la autenticación del usuario utilizando el AuthenticationManager
-        authenticationManager.authenticateUser(username, password);
+            @Override
+            public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
+                // Manejar errores de conexión
+                Toast.makeText(MainActivity.this, "Error de conexión", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
