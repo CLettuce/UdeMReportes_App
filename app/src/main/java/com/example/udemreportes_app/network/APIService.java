@@ -1,4 +1,6 @@
-package com.example.udemreportes_app;
+package com.example.udemreportes_app.network;
+import com.example.udemreportes_app.response.LoginRequest;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;

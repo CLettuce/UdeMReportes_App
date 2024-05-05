@@ -1,5 +1,8 @@
-package com.example.udemreportes_app;
+package com.example.udemreportes_app.network;
 import android.app.Application;
+
+import com.example.udemreportes_app.network.APIService;
+
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import javax.net.ssl.SSLContext;
@@ -8,7 +11,7 @@ import javax.net.ssl.X509TrustManager;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-public class MyApplication extends Application {
+public class ApiClient extends Application {
     private static APIService apiService;
 
     @Override
