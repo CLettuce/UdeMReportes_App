@@ -17,6 +17,9 @@
         android:theme="@style/Theme.UdeMReportes_App"
         tools:targetApi="31"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".MainActivity2"
+            android:exported="false" />
 
         <activity
             android:name=".MainActivity"

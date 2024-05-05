@@ -46,7 +46,7 @@ public class MyApplication extends Application {
 
             // Configurar Retrofit con el cliente OkHttpClient personalizado
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("https://10.0.2.2:7030/") // Utilizar la dirección IP del servidor
+                    .baseUrl("https://10.0.2.2:7268/") // Utilizar la dirección IP del servidor
                     .client(client)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
