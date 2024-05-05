@@ -6,4 +6,11 @@
     <color name="app_theme">#8e019e</color>
     <color name="app_the">#f6fbff</color>
     <color name="text_back">#f6fbff</color>
+
+    <color name="purple_200">#BD87FF</color>
+    <color name="purple_500">#6502F3</color>
+    <color name="purple_700">#3B04B6</color>
+    <color name="teal_200">#05D8C3</color>
+    <color name="teal_700">#018C8B</color>
+    <color name="greenSoft">#4CAF50</color>
 </resources>
