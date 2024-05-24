@@ -1,7 +1,10 @@
 package com.example.udemreportes_app;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -60,8 +63,11 @@ public class HomeFragment extends Fragment {
                 String carreraSeleccionada = spinnerCarrera.getSelectedItem().toString();
                 String descripcion = txtDescripcion.getText().toString();
 
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("user_prefs", MODE_PRIVATE);
+                String nombrePersona = sharedPreferences.getString("username", "default_user");
+
                 SolicitudRequest solicitudRequest = new SolicitudRequest();
-                solicitudRequest.setNombrePersona("Carlos");
+                solicitudRequest.setUsuario(nombrePersona);
                 solicitudRequest.setCarrera(carreraSeleccionada);
                 solicitudRequest.setDescripcion(descripcion);
                 solicitudRequest.setUbicacionPeticion(ubicacionSeleccionada);

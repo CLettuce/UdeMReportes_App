@@ -1,7 +1,7 @@
 package com.example.udemreportes_app.response;
 
 public class SolicitudRequest {
-    private String nombrePersona;
+    private String usuario;
     private String carrera;
     private String descripcion;
     private String ubicacionPeticion;
@@ -10,19 +10,19 @@ public class SolicitudRequest {
         // Constructor vacío necesario para la deserialización
     }
 
-    public SolicitudRequest(String nombrePersona, String carrera, String descripcion, String ubicacionPeticion) {
-        this.nombrePersona = nombrePersona;
+    public SolicitudRequest(String usuario, String carrera, String descripcion, String ubicacionPeticion) {
+        this.usuario = usuario;
         this.carrera = carrera;
         this.descripcion = descripcion;
         this.ubicacionPeticion = ubicacionPeticion;
     }
 
-    public String getNombrePersona() {
-        return nombrePersona;
+    public String getUsuario() {
+        return usuario;
     }
 
-    public void setNombrePersona(String nombrePersona) {
-        this.nombrePersona = nombrePersona;
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 
     public String getCarrera() {

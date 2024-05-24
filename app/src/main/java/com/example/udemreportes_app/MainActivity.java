@@ -1,6 +1,8 @@
 package com.example.udemreportes_app;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import okhttp3.ResponseBody;
@@ -45,9 +47,13 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                             if (response.isSuccessful()) {
-                                // Manejar la respuesta exitosa
                                 Log.d(TAG, "Inicio de sesión exitoso");
-                                // Si el inicio de sesión es exitoso, inicia MainActivity2
+                                SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString("username", username);
+                                editor.apply();
+
+
                                 Intent intent = new Intent(MainActivity.this, MainActivity2.class);
                                 startActivity(intent);
                                 finish(); // Esto evita que el usuario pueda regresar a esta actividad presionando el botón Atrás
