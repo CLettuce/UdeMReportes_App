@@ -13,4 +13,5 @@
     <color name="teal_200">#05D8C3</color>
     <color name="teal_700">#018C8B</color>
     <color name="greenSoft">#4CAF50</color>
+    <color name="transparent">#004CAF50</color>
 </resources>

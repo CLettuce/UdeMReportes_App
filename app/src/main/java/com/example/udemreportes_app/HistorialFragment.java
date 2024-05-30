@@ -1,64 +1,96 @@
 package com.example.udemreportes_app;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link HistorialFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.udemreportes_app.adapter.SolicitudesAdapter;
+import com.example.udemreportes_app.network.APIService;
+import com.example.udemreportes_app.network.ApiClient;
+import com.example.udemreportes_app.response.SolicitudResponse;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+
 public class HistorialFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     public HistorialFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HistorialFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static HistorialFragment newInstance(String param1, String param2) {
-        HistorialFragment fragment = new HistorialFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private RecyclerView recyclerView;
+    private SolicitudesAdapter solicitudesAdapter;
 
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_historial, container, false);
+
+        recyclerView = view.findViewById(R.id.rv_mostarApi);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        solicitudesAdapter = new SolicitudesAdapter();
+        recyclerView.setAdapter(solicitudesAdapter);
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("user_prefs", MODE_PRIVATE);
+        String nombrePersona = sharedPreferences.getString("username", "default_user");
+
+        if (!nombrePersona.isEmpty()) {
+            obtenerSolicitudesPorUsuario(nombrePersona);
+        } else {
+            Log.e("HistorialFragment", "El nombre de usuario no está disponible");
         }
+        return view;
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_historial, container, false);
+    private void obtenerSolicitudesPorUsuario(String username) {
+        APIService apiService = ApiClient.getApiService();
+        Call<List<SolicitudResponse>> call = apiService.obtenerSolicitudesPorUsuario(username);
+
+        call.enqueue(new Callback<List<SolicitudResponse>>() {
+            @Override
+            public void onResponse(Call<List<SolicitudResponse>> call, Response<List<SolicitudResponse>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<SolicitudResponse> solicitudes = response.body();
+                    for (SolicitudResponse solicitud : solicitudes) {
+                        Log.d("Solicitud", "Estado: " + solicitud.getEstado() + ", Descripcion: " + solicitud.getDescripcion() + ", FechaRegistro: " + solicitud.getFechaRegistro());
+                    }
+                    solicitudesAdapter.setSolicitudes(solicitudes);
+                } else {
+                    Toast.makeText(getContext(), "Error en la respuesta del servidor", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<SolicitudResponse>> call, Throwable t) {
+                Toast.makeText(getContext(), "Error en la conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
